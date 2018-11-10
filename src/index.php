@@ -1,12 +1,24 @@
 <?php 
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
     require('milkConverter.php');
 
     $milkConverter;
     $targetQtyId = "targetQty";
+    $targetTypeId = "targetType";
 
-    if (isset($_GET[$targetQtyId])) {
+    if (isset($_GET[$targetQtyId]) && isset($_GET[$targetTypeId])) {
         $targetQty = (int)$_GET[$targetQtyId];
-        $milkConverter = new MilkConverter($targetQty);
+        $targetType = $_GET[$targetTypeId];
+        $milkConverter = new MilkConverter($targetQty, $targetType);
+    }
+    else if (isset($_GET[$targetQtyId])) {
+        $milkConverter = new MilkConverter((int)$_GET[$targetQtyId]);
+    }
+    else if (isset($_GET[$targetTypeId])) {
+        $milkConverter = new MilkConverter(0, $_GET[$targetTypeId]);
     }
     else {
         $milkConverter = new MilkConverter();
@@ -23,7 +35,12 @@
     </head>
     <body>
         <form method="GET">
-            <p>I have heavy whipping cream and 1% milk. I want <input type="number" id="<?php echo $targetQtyId ?>" name="<?php echo $targetQtyId ?>" value="<?php echo $milkConverter->getTargetQty() ?>" /> cups of whole milk.
+            <p>I have heavy whipping cream and 1% milk. I want
+                <input type="number" id="<?php echo $targetQtyId ?>" name="<?php echo $targetQtyId ?>" value="<?php echo $milkConverter->getTargetQty() ?>" /> cups of 
+                <select name="<?php echo $targetTypeId ?>">
+                    <option <?php if ($milkConverter->getTargetType() === $milkConverter::WHOLE) echo 'selected' ?> value="<?php echo $milkConverter::WHOLE ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::WHOLE] ?></option>
+                    <option <?php if ($milkConverter->getTargetType() === $milkConverter::TWOPERCENT) echo 'selected' ?> value="<?php echo $milkConverter::TWOPERCENT ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::TWOPERCENT] ?></option>
+                </select>.
             <p><input type="submit" />
         </form>
 
