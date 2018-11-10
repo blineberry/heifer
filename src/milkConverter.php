@@ -1,7 +1,5 @@
 <?php
 
-require_once('conversionResult.php');
-
 class MilkConverter {
     public static $heavyWhippingCreamFatPercent = .36;
     public static $wholeMilkFatPercent = .0325;
