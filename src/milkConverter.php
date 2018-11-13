@@ -1,5 +1,8 @@
 <?php
 
+require('volume.php');
+require_once('units.php');
+
 class MilkConverter {
     const HEAVYWHIPPINGCREAM = 'heavywhippingcream';
     const WHOLE = 'whole';
@@ -23,19 +26,19 @@ class MilkConverter {
         self::SKIM => "skim milk",
     );
 
-    private $targetQty;
-    private $whippingCreamQty;
-    private $onePercentQty;
+    private $targetVolume;
+    private $whippingCreamVolume;
+    private $onePercentVolume;
     private $targetType;
     
-    function __construct($targetQty = 0, $targetType = self::WHOLE) {
-        $targetQty = (int) $targetQty;
+    function __construct($targetVolume = 0, $targetType = self::WHOLE) {
+        $targetVolume = new Volume((int) $targetVolume, Units::Cups);
 
-        if ($targetQty <= 0) {
+        if ($targetVolume->getQty() <= 0) {
             return;
         }
         
-        $this->targetQty = $targetQty;
+        $this->targetVolume = $targetVolume;
 
         if (!isset($this->fatContent[$targetType])) {
             return;
@@ -47,15 +50,15 @@ class MilkConverter {
         $fatHigh = $this->fatContent[self::HEAVYWHIPPINGCREAM];
         $fatLow = $this->fatContent[self::ONEPERCENT];
 
-        $fatHighQty = ($targetFat - $fatLow) / ($fatHigh - $fatLow) * $targetQty;
-        $fatLowQty = $targetQty - $fatHighQty;
+        $fatHighVolume = new Volume(($targetFat - $fatLow) / ($fatHigh - $fatLow) * $targetVolume->getQty(), $targetVolume->getUnit());
+        $fatLowVolume = new Volume($targetVolume->getQty() - $fatHighVolume->getQty(), $targetVolume->getUnit());
 
-        $this->whippingCreamQty = $fatHighQty;
-        $this->onePercentQty = $fatLowQty;
+        $this->whippingCreamVolume = $fatHighVolume;
+        $this->onePercentVolume = $fatLowVolume;
     }
 
-    public function getTargetQty() {
-        return $this->targetQty;
+    public function getTargetVolume() {
+        return $this->targetVolume;
     }
 
     public function getTargetType() {
@@ -63,8 +66,11 @@ class MilkConverter {
     }
 
     public function getInstructions() {
-        if ($this->targetQty > 0) {
-            return "To get $this->targetQty cups of whole milk, use $this->whippingCreamQty cups of whipping cream and $this->onePercentQty cups of 1% milk.";
+        if ($this->targetVolume->getQty() > 0) {
+            return "To get " . $this->targetVolume->getQty() . " " . Units::toString($this->targetVolume->getUnit(), $this->targetVolume->getQty() == 1) .
+                " of whole milk, use " . $this->whippingCreamVolume->toPrettyString() . 
+                " of whipping cream and " . $this->onePercentVolume->toPrettyString() .
+                " of 1% milk.";
         }
 
         return "";
