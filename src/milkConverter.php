@@ -33,12 +33,11 @@ class MilkConverter {
     
     function __construct($targetVolume = 0, $targetType = self::WHOLE) {
         $targetVolume = new Volume((int) $targetVolume, Units::Cups);
+        $this->targetVolume = $targetVolume;
 
         if ($targetVolume->getQty() <= 0) {
             return;
-        }
-        
-        $this->targetVolume = $targetVolume;
+        }        
 
         if (!isset($this->fatContent[$targetType])) {
             return;
