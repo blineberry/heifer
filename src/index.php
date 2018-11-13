@@ -36,7 +36,7 @@
     <body>
         <form method="GET">
             <p>I have heavy whipping cream and 1% milk. I want
-                <input type="number" id="<?php echo $targetQtyId ?>" name="<?php echo $targetQtyId ?>" value="<?php echo $milkConverter->getTargetQty() ?>" /> cups of 
+                <input type="number" id="<?php echo $targetQtyId ?>" name="<?php echo $targetQtyId ?>" value="<?php echo $milkConverter->getTargetVolume()->getQty() ?>" /> cups of 
                 <select name="<?php echo $targetTypeId ?>">
                     <option <?php if ($milkConverter->getTargetType() === $milkConverter::WHOLE) echo 'selected' ?> value="<?php echo $milkConverter::WHOLE ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::WHOLE] ?></option>
                     <option <?php if ($milkConverter->getTargetType() === $milkConverter::TWOPERCENT) echo 'selected' ?> value="<?php echo $milkConverter::TWOPERCENT ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::TWOPERCENT] ?></option>
