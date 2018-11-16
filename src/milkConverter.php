@@ -67,7 +67,7 @@ class MilkConverter {
     public function getInstructions() {
         if ($this->targetVolume->getQty() > 0) {
             return "To get " . $this->targetVolume->getQty() . " " . Units::toString($this->targetVolume->getUnit(), $this->targetVolume->getQty() == 1) .
-                " of whole milk, use " . $this->whippingCreamVolume->toPrettyString() . 
+                " of " . $this->dairyTypeDisplayNames[$this->targetType] . ", use " . $this->whippingCreamVolume->toPrettyString() . 
                 " of whipping cream and " . $this->onePercentVolume->toPrettyString() .
                 " of 1% milk.";
         }
