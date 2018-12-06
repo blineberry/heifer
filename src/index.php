@@ -7,15 +7,15 @@
 
     $targetQtyId = "targetQty";
     $targetTypeId = "targetType";
-    $starter1TypeId;
-    $starter2TypeId;
+    $starter1TypeId = "starter1Type";
+    $starter2TypeId = "starter2Type";
 
     $targetVolume = isset($_GET[$targetQtyId]) ? $_GET[$targetQtyId] : 0;
     $targetType = isset($_GET[$targetTypeId]) ? $_GET[$targetTypeId] : MilkConverter::WHOLE;
     $starter1Type = isset($_GET[$starter1TypeId]) ? $_GET[$starter1TypeId] : MilkConverter::HEAVYWHIPPINGCREAM;
     $starter2Type = isset($_GET[$starter2TypeId]) ? $_GET[$starter2TypeId] : MilkConverter::ONEPERCENT;
 
-    $milkConverter = new $milkConverter($targetVolume, $targetType, $starter1Type, $starter2Type);
+    $milkConverter = new MilkConverter($targetVolume, $targetType, $starter1Type, $starter2Type);
     
 ?><!DOCTYPE html>
 <html>
@@ -32,17 +32,16 @@
             <?php foreach($milkConverter->getStarter1Types() as $type): ?> 
                 <option value="<?php echo $type["value"] ?>" <?php if ($type["isSelected"]) echo "selected" ?>><?php echo $type["text"] ?></option>
             <?php endforeach; ?>
-            </select> and <select>
-                <option value="<?php echo $milkConverter::HEAVYWHIPPINGCREAM ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::HEAVYWHIPPINGCREAM] ?></option>
-                <option value="<?php echo $milkConverter::WHOLE ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::WHOLE] ?></option>
-                <option value="<?php echo $milkConverter::TWOPERCENT ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::TWOPERCENT] ?></option>
-                <option value="<?php echo $milkConverter::ONEPERCENT ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::ONEPERCENT] ?></option>
-                <option value="<?php echo $milkConverter::SKIM ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::SKIM] ?></option>                
+            </select> and <select name="<?php echo $starter2TypeId ?>">
+            <?php foreach($milkConverter->getStarter2Types() as $type): ?> 
+                <option value="<?php echo $type["value"] ?>" <?php if ($type["isSelected"]) echo "selected" ?>><?php echo $type["text"] ?></option>
+            <?php endforeach; ?>                
             </select>. I want
                 <input type="number" id="<?php echo $targetQtyId ?>" name="<?php echo $targetQtyId ?>" value="<?php echo $milkConverter->getTargetVolume()->getQty() ?>" /> cups of 
                 <select name="<?php echo $targetTypeId ?>">
-                    <option <?php if ($milkConverter->getTargetType() === $milkConverter::WHOLE) echo 'selected' ?> value="<?php echo $milkConverter::WHOLE ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::WHOLE] ?></option>
-                    <option <?php if ($milkConverter->getTargetType() === $milkConverter::TWOPERCENT) echo 'selected' ?> value="<?php echo $milkConverter::TWOPERCENT ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::TWOPERCENT] ?></option>
+                <?php foreach($milkConverter->getTargetTypes() as $type): ?> 
+                    <option value="<?php echo $type["value"] ?>" <?php if ($type["isSelected"]) echo "selected" ?>><?php echo $type["text"] ?></option>
+                <?php endforeach; ?>   
                 </select>.
             <p><input type="submit" />
         </form>
