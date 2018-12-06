@@ -5,24 +5,17 @@
 
     require('milkConverter.php');
 
-    $milkConverter;
     $targetQtyId = "targetQty";
     $targetTypeId = "targetType";
+    $starter1TypeId;
+    $starter2TypeId;
 
-    if (isset($_GET[$targetQtyId]) && isset($_GET[$targetTypeId])) {
-        $targetQty = (int)$_GET[$targetQtyId];
-        $targetType = $_GET[$targetTypeId];
-        $milkConverter = new MilkConverter($targetQty, $targetType);
-    }
-    else if (isset($_GET[$targetQtyId])) {
-        $milkConverter = new MilkConverter((int)$_GET[$targetQtyId]);
-    }
-    else if (isset($_GET[$targetTypeId])) {
-        $milkConverter = new MilkConverter(0, $_GET[$targetTypeId]);
-    }
-    else {
-        $milkConverter = new MilkConverter();
-    }
+    $targetVolume = isset($_GET[$targetQtyId]) ? $_GET[$targetQtyId] : 0;
+    $targetType = isset($_GET[$targetTypeId]) ? $_GET[$targetTypeId] : MilkConverter::WHOLE;
+    $starter1Type = isset($_GET[$starter1TypeId]) ? $_GET[$starter1TypeId] : MilkConverter::HEAVYWHIPPINGCREAM;
+    $starter2Type = isset($_GET[$starter2TypeId]) ? $_GET[$starter2TypeId] : MilkConverter::ONEPERCENT;
+
+    $milkConverter = new $milkConverter($targetVolume, $targetType, $starter1Type, $starter2Type);
     
 ?><!DOCTYPE html>
 <html>
@@ -35,7 +28,17 @@
     </head>
     <body>
         <form method="GET">
-            <p>I have heavy whipping cream and 1% milk. I want
+            <p>I have <select name="<?php echo $starter1TypeId ?>">
+            <?php foreach($milkConverter->getStarter1Types() as $type): ?> 
+                <option value="<?php echo $type["value"] ?>" <?php if ($type["isSelected"]) echo "selected" ?>><?php echo $type["text"] ?></option>
+            <?php endforeach; ?>
+            </select> and <select>
+                <option value="<?php echo $milkConverter::HEAVYWHIPPINGCREAM ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::HEAVYWHIPPINGCREAM] ?></option>
+                <option value="<?php echo $milkConverter::WHOLE ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::WHOLE] ?></option>
+                <option value="<?php echo $milkConverter::TWOPERCENT ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::TWOPERCENT] ?></option>
+                <option value="<?php echo $milkConverter::ONEPERCENT ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::ONEPERCENT] ?></option>
+                <option value="<?php echo $milkConverter::SKIM ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::SKIM] ?></option>                
+            </select>. I want
                 <input type="number" id="<?php echo $targetQtyId ?>" name="<?php echo $targetQtyId ?>" value="<?php echo $milkConverter->getTargetVolume()->getQty() ?>" /> cups of 
                 <select name="<?php echo $targetTypeId ?>">
                     <option <?php if ($milkConverter->getTargetType() === $milkConverter::WHOLE) echo 'selected' ?> value="<?php echo $milkConverter::WHOLE ?>"><?php echo $milkConverter->dairyTypeDisplayNames[$milkConverter::WHOLE] ?></option>
